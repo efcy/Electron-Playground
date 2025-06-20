@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Video Player</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background-color: #282c34;
+      color: #abb2bf;
+    }
+    .container {
+      background-color: #3e4451;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h1 {
+      color: #61afef;
+    }
+    .controls button {
+      background-color: #61afef;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .controls button:hover {
+      background-color: #528cbe;
+    }
+    #video-player {
+      width: 100%;
+      max-width: 800px;
+      margin-top: 20px;
+      background-color: black;
+      border-radius: 4px;
+    }
+    .file-info {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #98c379;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Electron Video Player</h1>
+    
+    <div class="controls">
+      <button id="load-predefined-video">Load Predefined Video</button>
+    </div>
+    
+    <video id="video-player" controls type='video/mp4'></video>
+    
+    <div class="file-info" id="file-info">
+      No file selected
+    </div>
+  </div>
+
+  <script>    
+    const videoPlayer = document.getElementById('video-player')
+    const loadPredefinedVideoBtn = document.getElementById('load-predefined-video') // Renamed button
+    const fileInfo = document.getElementById('file-info')
+    
+    // New function to set the video source and update info
+    function setVideoSource(path) {
+      if (!path) {
+        fileInfo.textContent = "Error: Predefined video path not found or invalid.";
+        videoPlayer.src = ""; // Clear video if path is bad
+        videoPlayer.load(); // Reload to clear
+        return;
+      }
+      videoPlayer.src = path
+      fileInfo.textContent = `Playing: ${path}`
+
+      // Remove existing loadedmetadata listener to prevent duplicates
+      videoPlayer.removeEventListener('loadedmetadata', updateFileInfoDuration);
+      
+      // Add a new loadedmetadata listener for the current video
+      videoPlayer.addEventListener('loadedmetadata', updateFileInfoDuration);
+      videoPlayer.play(); // Auto-play when loaded
+    }
+
+    // Helper function for the loadedmetadata event
+    function updateFileInfoDuration() {
+      fileInfo.textContent += ` | Duration: ${formatTime(videoPlayer.duration)}`
+    }
+
+    // Load predefined video on button click
+    loadPredefinedVideoBtn.addEventListener('click', async () => {
+      //const filePath = await ipcRenderer.invoke('get-predefined-video-path', "video.mp4")
+      const filePath = await window.electronAPI.getVideoByFilename("D:/Repositories/Electron-Playground/video_player/video.mp4") 
+      setVideoSource(filePath)
+    })
+    
+    // Format time (seconds to HH:MM:SS)
+    function formatTime(seconds) {
+      const date = new Date(0)
+      date.setSeconds(seconds)
+      return date.toISOString().substr(11, 8)
+    }
+    
+    // Keep UI updates based on video state
+    videoPlayer.addEventListener('play', () => {
+      // If you had a play/pause button, you'd update its text here
+    })
+    
+    videoPlayer.addEventListener('pause', () => {
+      // If you had a play/pause button, you'd update its text here
+    })
+  </script>
+</body>
+</html>

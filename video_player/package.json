@@ -1,0 +1,25 @@
+{
+  "name": "electron-playground",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/efcy/Electron-Playground.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/efcy/Electron-Playground/issues"
+  },
+  "homepage": "https://github.com/efcy/Electron-Playground#readme",
+  "description": "",
+  "devDependencies": {
+    "electron": "^36.5.0"
+  }
+}
