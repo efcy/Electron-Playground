@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Video Player</title>
+</head>
+<body>
+  <div class="container">
+    <div class="settings-group">
+      <label for="my-setting-input">My Custom String:</label>
+      <input type="text" id="my-setting-input" placeholder="Loading current setting...">
+      <button id="save-setting-btn">Save Setting</button>
+      <p id="status-message"></p>
+    </div>
+
+  </div>
+
+  <script>    
+    const mySettingInput = document.getElementById('my-setting-input')
+    const saveSettingBtn = document.getElementById('save-setting-btn')
+    const statusMessage = document.getElementById('status-message')
+
+    // Function to update the input field with the current setting
+    async function updateSettingInput() {
+      const currentSetting = await window.electronAPI.getMySetting()
+      mySettingInput.value = currentSetting || "" // Set current value
+      mySettingInput.placeholder = currentSetting || "Enter a string here" // Set placeholder
+    }
+
+    // Handle saving the setting
+    saveSettingBtn.addEventListener('click', async () => {
+      const newValue = mySettingInput.value.trim()
+      if (newValue) {
+        const success = await window.electronAPI.setMySetting(newValue)
+        if (success) {
+          statusMessage.textContent = `Setting saved successfully: "${newValue}"`
+          statusMessage.style.color = "#98c379" // Green
+          updateSettingInput() // Refresh input with the actual saved value
+        } else {
+          statusMessage.textContent = `Failed to save setting. Please check input.`
+          statusMessage.style.color = "#e06c75" // Red
+        }
+      } else {
+        statusMessage.textContent = "Please enter a value before saving."
+        statusMessage.style.color = "orange"
+      }
+    })
+
+    // Initial load of the setting when the page loads
+    document.addEventListener('DOMContentLoaded', updateSettingInput)
+  </script>
+</body>
+</html>
